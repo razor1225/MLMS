@@ -2,7 +2,7 @@
 # @Author: UnsignedByte
 # @Date:   11:42:41, 01-Dec-2020
 # @Last Modified by:   UnsignedByte
-# @Last Modified time: 23:39:10, 03-Dec-2020
+# @Last Modified time: 23:48:45, 03-Dec-2020
 
 import numpy as np
 import utils
@@ -13,9 +13,9 @@ import time
 import os
 
 netCount = 100 # number of neural nets
-gamesPer = 150; # number of oppontents each player plays each generation
+gamesPer = 70; # number of oppontents each player plays each generation
 fakeAgents = 50 # fake agent count
-gameCount = 20 # number of games per match
+gameCount = 30 # number of games per match
 ## Shape:
 # Input layer - memory size
 # Hidden Layer
@@ -120,6 +120,19 @@ if __name__ == '__main__':
 		print(f'Number of each choice: {bcolors.FAIL}{n.rcount}{bcolors.ENDC}')
 
 		cases = [
+			[0,0,0,0],
+			[0,0,1,1],
+			[0,0,2,1],
+			[0,0,1,2],
+			[0,0,2,2],
+			[1,1,1,1],
+			[1,1,1,2],
+			[1,2,1,2],
+			[2,1,2,1],
+			[2,2,2,1],
+			[1,1,2,1],
+			[1,2,1,1],
+			[2,2,2,2],
 			[0,0,0,0,0,0],
 			[0,0,0,0,1,1],
 			[0,0,0,0,2,1],
@@ -141,6 +154,7 @@ if __name__ == '__main__':
 		]
 
 		for m in cases:
-			testCase(n, m)
+			if len(m) == brainShape[0]/M:
+				testCase(n, m)
 
 		nets = reproduce();
