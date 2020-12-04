@@ -2,7 +2,7 @@
 # @Author: UnsignedByte
 # @Date:	 22:05:55, 02-Dec-2020
 # @Last Modified by:   UnsignedByte
-# @Last Modified time: 15:46:16, 03-Dec-2020
+# @Last Modified time: 21:12:55, 03-Dec-2020
 
 import numpy as np
 import utils
@@ -50,16 +50,21 @@ class Brain:
 		self.rcount = np.zeros(self.shape[-1]);
 		self.age+=1;
 	def resetMemory(self):
-		self.memory = np.zeros(self.shape[0]);
+		self.memory = np.zeros(int(self.shape[0]/self.shape[-1]));
 	def calculate(self):
-		layers = [self.memory]
+		l = np.zeros(self.shape[0])
+		for n in range(len(self.memory)):
+			if self.memory[n] > 0:
+				l[int(self.shape[-1]*n+self.memory[n]-1)] = 1;
+		layers = [l]
 		for a, b in zip(self.weights, self.biases):
-			layers.append(utils.sigmoid((a @ layers[-1])+b)) # calculate next layer {sigmoid(weights * layer + biases)}
+			layers.append((a @ layers[-1])+b) # calculate next layer {sigmoid(weights * layer + biases)}
 		# print(layers)
+		layers[-1] = utils.sigmoid(layers[-1]);
+		layers[-1] = layers[-1]/sum(layers[-1]);
 		return layers
 	def result(self):
-		l = self.calculate()[-1]; # last layer (output layer)
-		l = np.random.choice(range(self.shape[-1]), p=l/sum(l));
+		l = np.random.choice(range(self.shape[-1]), p=self.calculate()[-1]);
 		self.rcount[l]+=1
 		return l; # return chosen choice
 	def reproduce(self):

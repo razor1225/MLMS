@@ -2,7 +2,7 @@
 # @Author: UnsignedByte
 # @Date:   11:42:41, 01-Dec-2020
 # @Last Modified by:   UnsignedByte
-# @Last Modified time: 16:39:49, 03-Dec-2020
+# @Last Modified time: 18:16:50, 03-Dec-2020
 
 import numpy as np
 import utils
@@ -31,10 +31,10 @@ with open('dataset.txt', 'r') as f:
 		G[tuple(n)] = tokens.pop(0)
 
 netCount = 50 # number of neural nets
-gamesPer = 20; # number of oppontents each player plays each generation
-fakeAgents = 50 # fake agent count
-gameCount = 25 # number of games per match
-brainShape = [2*P, 5, M] # shape of neural net
+gamesPer = 40; # number of oppontents each player plays each generation
+fakeAgents = 25 # fake agent count
+gameCount = 15 # number of games per match
+brainShape = [2*P*M, 5, M] # shape of neural net
 ## Shape:
 # Input layer - memory size
 # Hidden Layer
@@ -76,8 +76,8 @@ def reproduce():
 def testCase(n, memory):
 	n.memory = memory;
 	c = n.calculate();
+	print(f"{bcolors.WARNING}Net would run {np.argmax(c[-1])+1} given {memory}; probabilities {list(c[-1])}{bcolors.ENDC}")
 	print(c)
-	print(f"{bcolors.WARNING}Net would run {np.argmax(c[-1])+1} given {memory}{bcolors.ENDC}")
 
 
 runGames();
@@ -103,6 +103,7 @@ for i in range(1000):
 		[2,1,2,1],
 		[2,2,2,1],
 		[1,1,2,1],
+		[1,2,1,1],
 		[2,2,2,2]
 	]
 
