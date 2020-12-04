@@ -2,12 +2,22 @@
 # @Author: UnsignedByte
 # @Date:   11:42:41, 01-Dec-2020
 # @Last Modified by:   UnsignedByte
-# @Last Modified time: 09:24:05, 03-Dec-2020
+# @Last Modified time: 16:39:49, 03-Dec-2020
 
 import numpy as np
 import utils
 import brain
 import itertools
+
+class bcolors:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
 
 # read game matrices
 with open('dataset.txt', 'r') as f:
@@ -21,62 +31,82 @@ with open('dataset.txt', 'r') as f:
 		G[tuple(n)] = tokens.pop(0)
 
 netCount = 50 # number of neural nets
+gamesPer = 20; # number of oppontents each player plays each generation
+fakeAgents = 50 # fake agent count
 gameCount = 25 # number of games per match
-brainShape = [1*P, M] # shape of neural net
+brainShape = [2*P, 5, M] # shape of neural net
 ## Shape:
 # Input layer - memory size
 # Hidden Layer
 # Output Layer - move
 
 nets = np.array([brain.Brain.random(brainShape) for i in range(netCount)])
-possibleGames = list(map(list, itertools.combinations(range(netCount), P))) # All possible arrangements of games (subsets)
+# possibleGames = np.array(list(itertools.combinations(range(netCount+fakeAgents), P)), dtype=np.dtype('int,int')) # All possible arrangements of games (subsets)
 
 def runGames():
 	# reset all scores
 	np.vectorize(lambda x:x.resetScore())(nets)
 
+	allnets = np.append(nets, [brain.Bot(M) for x in range(fakeAgents)]) # Create unintellectual agents
+
 	# NOTE: number of games per generation will be netCount choose P (can easily become huge if P>2)
-	for i in possibleGames:
-		# Select neural nets for game
-		np.vectorize(lambda x:x.resetMemory())(nets[i])
-		for j in range(gameCount):
-			results = tuple(np.vectorize(lambda x:x.result())(nets[i]))
-			# print(i, results)
-			for k in range(P): # Loop through all players to calculate results
-				nets[i[k]].score+=G[tuple(results[k:]+results[:k])] # add score based on game grid
-				nets[i[k]].memory = np.append(nets[i[k]].memory[P:], results[k:]+results[:k])
-	# print([x.score for x in nets])
+	# Loop through players and choose 2 opponents for each (Note: players can play the same brains twice, including self)
+	for i in range(netCount):
+		for ii in range(gamesPer):
+			# Select neural nets for game
+			g = np.append([i], np.random.choice(range(len(allnets)), P-1))
+			greal = list(filter(lambda x:x<netCount, g)); # get only the "real" players
+			np.vectorize(lambda x:x.resetMemory())(nets[greal])
+			for j in range(gameCount):
+				results = tuple(np.vectorize(lambda x:x.result())(allnets[g]))
+				# print(i, results)
+				for k in range(len(g)): # Loop through all players to calculate results
+					if g[k] in greal:
+						nets[g[k]].plays+=1 # add total plays so average score can be calculated
+						nets[g[k]].score+=G[tuple(results[k:]+results[:k])] # add score based on game gridx
+						nets[g[k]].memory = np.append(nets[g[k]].memory[P:], np.array(results[k:]+results[:k])+1)
 
 # kill half the neural nets and have the remaining half reproduce (asexual)
 def reproduce():
-	scores = np.vectorize(lambda x:x.score**3)(nets); # get scores (cubed to increase weight of higher scores)
-	scores = scores/sum(scores)
-	survivors = np.random.choice(nets, netCount//2, replace=False, p=scores); # chosen survivors!
+	scores = np.vectorize(lambda x:x.score/x.plays)(nets);
+	scores = (scores+min(scores))**3 # get scores (cubed to increase weight of higher scores)
+	survivors = np.random.choice(nets, netCount//2, replace=False, p=scores/sum(scores)); # chosen survivors!
 	return np.append(survivors, np.vectorize(lambda x:x.reproduce())(survivors))
+
+def testCase(n, memory):
+	n.memory = memory;
+	c = n.calculate();
+	print(c)
+	print(f"{bcolors.WARNING}Net would run {np.argmax(c[-1])+1} given {memory}{bcolors.ENDC}")
+
+
+runGames();
 
 for i in range(1000):
 	# print(f"Running generation {i}...")
 	runGames();
-	nets = reproduce();
 	np.save(f'results/{i}.npy', nets)
-	print(f"\nBest brain for generation {i}:")
-	n = nets[np.argmax(np.vectorize(lambda x:x.score)(nets))]
-	print(n.weights)
-	print(n.biases)
-	print(n.score)
-	print(n.rcount)
-	n.memory = [-1,-1];
-	print(f"First round, net would run {n.result()}")
-	print(n.calculate())
-	n.memory = [0,0];
-	print(f"Given 5 00, net would run {n.result()}")
-	print(n.calculate())
-	n.memory = [0,1];
-	print(f"Given 5 01, net would run {n.result()}")
-	print(n.calculate())
-	n.memory = [1,0];
-	print(f"Given 5 10, net would run {n.result()}")
-	print(n.calculate())
-	n.memory = [1,1];
-	print(f"Given 5 11, net would run {n.result()}")
-	print(n.calculate())
+	print(f"\n{bcolors.HEADER}Best brain for generation {i}{bcolors.ENDC}")
+	n = nets[np.argmax(np.vectorize(lambda x:x.score/x.plays)(nets))]
+	print(f'{bcolors.OKGREEN}Average score per game: {n.score/n.plays}{bcolors.ENDC}')
+	print(f'Number of each choice: {bcolors.FAIL}{n.rcount}{bcolors.ENDC}')
+
+	cases = [
+		[0,0,0,0],
+		[0,0,1,1],
+		[0,0,2,1],
+		[0,0,1,2],
+		[0,0,2,2],
+		[1,1,1,1],
+		[1,1,1,2],
+		[1,2,1,2],
+		[2,1,2,1],
+		[2,2,2,1],
+		[1,1,2,1],
+		[2,2,2,2]
+	]
+
+	for m in cases:
+		testCase(n, m)
+
+	nets = reproduce();
