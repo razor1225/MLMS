@@ -2,12 +2,14 @@
 # @Author: UnsignedByte
 # @Date:   11:42:41, 01-Dec-2020
 # @Last Modified by:   UnsignedByte
-# @Last Modified time: 18:16:50, 03-Dec-2020
+# @Last Modified time: 21:24:12, 03-Dec-2020
 
 import numpy as np
 import utils
 import brain
 import itertools
+import time
+import os
 
 class bcolors:
     HEADER = '\033[95m'
@@ -18,6 +20,11 @@ class bcolors:
     ENDC = '\033[0m'
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
+
+millis = str(int(round(time.time() * 1000)))
+print(f'{bcolors.HEADER}Starting generations with ID {millis}{bcolors.ENDC}')
+rawpath = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'results', millis, 'raws');
+os.makedirs(rawpath, exist_ok=True)
 
 # read game matrices
 with open('dataset.txt', 'r') as f:
@@ -85,7 +92,7 @@ runGames();
 for i in range(1000):
 	# print(f"Running generation {i}...")
 	runGames();
-	np.save(f'results/{i}.npy', nets)
+	np.save(os.path.join(rawpath, f'gen_{i}.npy'), nets)
 	print(f"\n{bcolors.HEADER}Best brain for generation {i}{bcolors.ENDC}")
 	n = nets[np.argmax(np.vectorize(lambda x:x.score/x.plays)(nets))]
 	print(f'{bcolors.OKGREEN}Average score per game: {n.score/n.plays}{bcolors.ENDC}')
