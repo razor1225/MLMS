@@ -2,42 +2,37 @@
 # @Author: UnsignedByte
 # @Date:   11:42:41, 01-Dec-2020
 # @Last Modified by:   UnsignedByte
-# @Last Modified time: 00:00:01, 04-Dec-2020
+# @Last Modified time: 10:54:37, 04-Dec-2020
 
 import numpy as np
 import utils
+from utils import bcolors
 import brain
 import multiprocessing
 import itertools
 import time
 import os
+import shutil
 
 netCount = 100 # number of neural nets
 gamesPer = 70; # number of oppontents each player plays each generation
 fakeAgents = 50 # fake agent count
 gameCount = 30 # number of games per match
+generations = 5000
 ## Shape:
 # Input layer - memory size
 # Hidden Layer
 # Output Layer - move
 
-class bcolors:
-  HEADER = '\033[95m'
-  OKBLUE = '\033[94m'
-  OKGREEN = '\033[92m'
-  WARNING = '\033[93m'
-  FAIL = '\033[91m'
-  ENDC = '\033[0m'
-  BOLD = '\033[1m'
-  UNDERLINE = '\033[4m'
-
 if __name__ == '__main__':
 	millis = str(int(round(time.time() * 1000)))
 	print(f'{bcolors.HEADER}Starting generations with ID {millis}{bcolors.ENDC}')
-	rawpath = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'results', millis, 'raws');
+	fpath = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'results', millis)
+	rawpath = os.path.join(fpath, 'raws');
 	os.makedirs(rawpath, exist_ok=True)
 
 	# read game matrices
+	shutil.copy('dataset.txt', os.path.join(fpath, 'dataset.txt'));
 	with open('dataset.txt', 'r') as f:
 		tokens = list(map(int, f.read().split()));
 		P = tokens.pop(0); # number of concurrent players
@@ -49,6 +44,8 @@ if __name__ == '__main__':
 			G[tuple(n)] = tokens.pop(0)
 
 	brainShape = [3*P*M, 5, M] # shape of neural net
+	
+	np.save(os.path.join(fpath, f'params.npy'), (netCount, gamesPer, fakeAgents, gameCount, generations, P, M, G, brainShape))
 
 # numManager.register('numeri', numeri, exposed = ['getLen', 'appendi', 'svuota', 'stampa'])  
 
@@ -110,7 +107,41 @@ if __name__ == '__main__':
 		print(f"{bcolors.WARNING}Net would run {np.argmax(c[-1])+1} given {memory}; probabilities {list(c[-1])}{bcolors.ENDC}")
 		print(c)
 
-	for i in range(5000):
+	cases = [
+		[0,0,0,0],
+		[0,0,1,1],
+		[0,0,2,1],
+		[0,0,1,2],
+		[0,0,2,2],
+		[1,1,1,1],
+		[1,1,1,2],
+		[1,2,1,2],
+		[2,1,2,1],
+		[2,2,2,1],
+		[1,1,2,1],
+		[1,2,1,1],
+		[2,2,2,2],
+		[0,0,0,0,0,0],
+		[0,0,0,0,1,1],
+		[0,0,0,0,2,1],
+		[0,0,0,0,1,2],
+		[0,0,1,1,1,1],
+		[0,0,1,1,2,1],
+		[0,0,1,1,1,2],
+		[1,1,1,1,1,1],
+		[1,1,1,1,1,2],
+		[1,1,1,2,1,1],
+		[1,2,1,2,1,1],
+		[1,2,1,2,1,2],
+		[2,1,2,1,2,1],
+		[2,2,2,2,2,1],
+		[2,2,2,1,2,1],
+		[1,1,1,2,1,2],
+		[1,1,1,2,2,2],
+		[2,2,2,2,2,2]
+	]
+
+	for i in range(generations):
 		# print(f"Running generation {i}...")
 		runGames();
 		np.save(os.path.join(rawpath, f'gen_{i}.npy'), nets)
@@ -118,40 +149,6 @@ if __name__ == '__main__':
 		n = nets[np.argmax(np.vectorize(lambda x:x.score/x.plays)(nets))]
 		print(f'{bcolors.OKGREEN}Average score per game: {n.score/n.plays}{bcolors.ENDC}')
 		print(f'Number of each choice: {bcolors.FAIL}{n.rcount}{bcolors.ENDC}')
-
-		cases = [
-			[0,0,0,0],
-			[0,0,1,1],
-			[0,0,2,1],
-			[0,0,1,2],
-			[0,0,2,2],
-			[1,1,1,1],
-			[1,1,1,2],
-			[1,2,1,2],
-			[2,1,2,1],
-			[2,2,2,1],
-			[1,1,2,1],
-			[1,2,1,1],
-			[2,2,2,2],
-			[0,0,0,0,0,0],
-			[0,0,0,0,1,1],
-			[0,0,0,0,2,1],
-			[0,0,0,0,1,2],
-			[0,0,1,1,1,1],
-			[0,0,1,1,2,1],
-			[0,0,1,1,1,2],
-			[1,1,1,1,1,1],
-			[1,1,1,1,1,2],
-			[1,1,1,2,1,1],
-			[1,2,1,2,1,1],
-			[1,2,1,2,1,2],
-			[2,1,2,1,2,1],
-			[2,2,2,2,2,1],
-			[2,2,2,1,2,1],
-			[1,1,1,2,1,2],
-			[1,1,1,2,2,2],
-			[2,2,2,2,2,2]
-		]
 
 		for m in cases:
 			if len(m) == brainShape[0]/M:
