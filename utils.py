@@ -2,7 +2,7 @@
 # @Author: UnsignedByte
 # @Date:   21:41:38, 02-Dec-2020
 # @Last Modified by:   UnsignedByte
-# @Last Modified time: 22:50:52, 02-Dec-2020
+# @Last Modified time: 23:02:32, 03-Dec-2020
 
 import numpy as np
 
@@ -25,3 +25,9 @@ def base10(nums, base): # convert list of nums to base 10
 
 def sigmoid(x):
   return .5 * (1 + np.tanh(.5 * x))
+
+# https://stackoverflow.com/questions/480214/how-do-you-remove-duplicates-from-a-list-whilst-preserving-order
+def f7(seq):
+    seen = set()
+    seen_add = seen.add
+    return [x for x in seq if not (x in seen or seen_add(x))]
