@@ -2,7 +2,7 @@
 # @Author: UnsignedByte
 # @Date:   11:42:41, 01-Dec-2020
 # @Last Modified by:   UnsignedByte
-# @Last Modified time: 23:48:45, 03-Dec-2020
+# @Last Modified time: 00:00:01, 04-Dec-2020
 
 import numpy as np
 import utils
@@ -101,7 +101,7 @@ if __name__ == '__main__':
 	# kill half the neural nets and have the remaining half reproduce (asexual)
 	def reproduce():
 		scores = np.vectorize(lambda x:x.score/x.plays)(nets);
-		scores = (scores+min(scores))**3 # get scores (cubed to increase weight of higher scores)
+		scores = (scores-min(scores))**3 # get scores (cubed to increase weight of higher scores)
 		survivors = np.random.choice(nets, netCount//2, replace=False, p=scores/sum(scores)); # chosen survivors!
 		return np.append(survivors, np.vectorize(lambda x:x.reproduce())(survivors))
 
