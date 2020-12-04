@@ -2,7 +2,7 @@
 # @Author: UnsignedByte
 # @Date:   11:42:41, 01-Dec-2020
 # @Last Modified by:   UnsignedByte
-# @Last Modified time: 23:34:14, 03-Dec-2020
+# @Last Modified time: 23:39:10, 03-Dec-2020
 
 import numpy as np
 import utils
@@ -12,8 +12,8 @@ import itertools
 import time
 import os
 
-netCount = 50 # number of neural nets
-gamesPer = 50; # number of oppontents each player plays each generation
+netCount = 100 # number of neural nets
+gamesPer = 150; # number of oppontents each player plays each generation
 fakeAgents = 50 # fake agent count
 gameCount = 20 # number of games per match
 ## Shape:
@@ -48,7 +48,7 @@ if __name__ == '__main__':
 			n = n+[0]*(M-len(n))
 			G[tuple(n)] = tokens.pop(0)
 
-	brainShape = [2*P*M, 5, M] # shape of neural net
+	brainShape = [3*P*M, 5, M] # shape of neural net
 
 # numManager.register('numeri', numeri, exposed = ['getLen', 'appendi', 'svuota', 'stampa'])  
 
@@ -110,7 +110,7 @@ if __name__ == '__main__':
 		print(f"{bcolors.WARNING}Net would run {np.argmax(c[-1])+1} given {memory}; probabilities {list(c[-1])}{bcolors.ENDC}")
 		print(c)
 
-	for i in range(1000):
+	for i in range(5000):
 		# print(f"Running generation {i}...")
 		runGames();
 		np.save(os.path.join(rawpath, f'gen_{i}.npy'), nets)
@@ -120,19 +120,24 @@ if __name__ == '__main__':
 		print(f'Number of each choice: {bcolors.FAIL}{n.rcount}{bcolors.ENDC}')
 
 		cases = [
-			[0,0,0,0],
-			[0,0,1,1],
-			[0,0,2,1],
-			[0,0,1,2],
-			[0,0,2,2],
-			[1,1,1,1],
-			[1,1,1,2],
-			[1,2,1,2],
-			[2,1,2,1],
-			[2,2,2,1],
-			[1,1,2,1],
-			[1,2,1,1],
-			[2,2,2,2]
+			[0,0,0,0,0,0],
+			[0,0,0,0,1,1],
+			[0,0,0,0,2,1],
+			[0,0,0,0,1,2],
+			[0,0,1,1,1,1],
+			[0,0,1,1,2,1],
+			[0,0,1,1,1,2],
+			[1,1,1,1,1,1],
+			[1,1,1,1,1,2],
+			[1,1,1,2,1,1],
+			[1,2,1,2,1,1],
+			[1,2,1,2,1,2],
+			[2,1,2,1,2,1],
+			[2,2,2,2,2,1],
+			[2,2,2,1,2,1],
+			[1,1,1,2,1,2],
+			[1,1,1,2,2,2],
+			[2,2,2,2,2,2]
 		]
 
 		for m in cases:
