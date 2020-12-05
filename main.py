@@ -2,7 +2,7 @@
 # @Author: UnsignedByte
 # @Date:   11:42:41, 01-Dec-2020
 # @Last Modified by:   UnsignedByte
-# @Last Modified time: 23:34:51, 04-Dec-2020
+# @Last Modified time: 23:36:57, 04-Dec-2020
 
 import numpy as np
 import utils
@@ -94,7 +94,7 @@ if __name__ == '__main__':
 		for i in res:
 			for j in range(len(i[0])):
 				nets[i[0][j]].updateScores(i[1][i[0][j]], i[2][i[0][j]])
-		print(f'{bcolors.BOLD} Round took {time.time()-start} seconds.{bcolors.ENDC}')
+		print(f'{bcolors.BOLD}Round took {time.time()-start} seconds.{bcolors.ENDC}')
 	# kill half the neural nets and have the remaining half reproduce (asexual)
 	def reproduce():
 		scores = np.vectorize(lambda x:x.score/x.plays)(nets);
@@ -103,10 +103,10 @@ if __name__ == '__main__':
 		return np.append(survivors, np.vectorize(lambda x:x.reproduce())(survivors))
 
 	for i in range(generations):
-		# print(f"Running generation {i}...")
+		print(f"\n\n{bcolors.HEADER}Running generation {i}...{bcolors.ENDC}")
 		runGames();
 		np.save(os.path.join(rawpath, f'gen_{i}.npy'), nets)
-		print(f"\n{bcolors.HEADER}Best brain for generation {i}{bcolors.ENDC}")
+		print(f"{bcolors.HEADER}Best brain for generation {i}{bcolors.ENDC}")
 		n = nets[np.argmax(np.vectorize(lambda x:x.score/x.plays)(nets))]
 		print(f'{bcolors.OKGREEN}Average score per game: {n.score/n.plays}{bcolors.ENDC}')
 		print(f'Number of each choice: {bcolors.FAIL}{n.rcount}{bcolors.ENDC}')
