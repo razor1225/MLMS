@@ -2,7 +2,7 @@
 # @Author: UnsignedByte
 # @Date:   11:42:41, 01-Dec-2020
 # @Last Modified by:   UnsignedByte
-# @Last Modified time: 23:18:58, 04-Dec-2020
+# @Last Modified time: 23:30:10, 04-Dec-2020
 
 import numpy as np
 import utils
@@ -15,10 +15,10 @@ import os
 import shutil
 
 netCount = 100 # number of neural nets
-gamesPer = 70; # number of oppontents each player plays each generation
+gamesPer = 1; # number of oppontents each player plays each generation
 fakeAgents = 50 # fake agent count
 gameCount = 50 # number of games per match
-generations = 5000
+generations = 2
 ## Shape:
 # Input layer - memory size
 # Hidden Layer
@@ -102,40 +102,6 @@ if __name__ == '__main__':
 		survivors = np.random.choice(nets, netCount//2, replace=False, p=scores/sum(scores)); # chosen survivors!
 		return np.append(survivors, np.vectorize(lambda x:x.reproduce())(survivors))
 
-	cases = [
-		[0,0,0,0],
-		[0,0,1,1],
-		[0,0,2,1],
-		[0,0,1,2],
-		[0,0,2,2],
-		[1,1,1,1],
-		[1,1,1,2],
-		[1,2,1,2],
-		[2,1,2,1],
-		[2,2,2,1],
-		[1,1,2,1],
-		[1,2,1,1],
-		[2,2,2,2],
-		[0,0,0,0,0,0],
-		[0,0,0,0,1,1],
-		[0,0,0,0,2,1],
-		[0,0,0,0,1,2],
-		[0,0,1,1,1,1],
-		[0,0,1,1,2,1],
-		[0,0,1,1,1,2],
-		[1,1,1,1,1,1],
-		[1,1,1,1,1,2],
-		[1,1,1,2,1,1],
-		[1,2,1,2,1,1],
-		[1,2,1,2,1,2],
-		[2,1,2,1,2,1],
-		[2,2,2,2,2,1],
-		[2,2,2,1,2,1],
-		[1,1,1,2,1,2],
-		[1,1,1,2,2,2],
-		[2,2,2,2,2,2]
-	]
-
 	for i in range(generations):
 		# print(f"Running generation {i}...")
 		runGames();
@@ -145,10 +111,11 @@ if __name__ == '__main__':
 		print(f'{bcolors.OKGREEN}Average score per game: {n.score/n.plays}{bcolors.ENDC}')
 		print(f'Number of each choice: {bcolors.FAIL}{n.rcount}{bcolors.ENDC}')
 
-		for m in cases:
+		for m in brain.cases:
 			if len(m) == brainShape[0]/M:
 				brain.testCase(n, m)
 
 		nets = reproduce();
 
 	print(f'{bcolors.HEADER}Finished generations with ID {millis}{bcolors.ENDC}')
+	os.rename(fpath, fpath+'-completed')
