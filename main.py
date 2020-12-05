@@ -2,7 +2,7 @@
 # @Author: UnsignedByte
 # @Date:   11:42:41, 01-Dec-2020
 # @Last Modified by:   UnsignedByte
-# @Last Modified time: 23:33:47, 04-Dec-2020
+# @Last Modified time: 23:34:51, 04-Dec-2020
 
 import numpy as np
 import utils
@@ -17,7 +17,7 @@ import shutil
 netCount = 100 # number of neural nets
 gamesPer = 70; # number of oppontents each player plays each generation
 fakeAgents = 50 # fake agent count
-gameCount = 50 # number of games per match
+gameCount = 30 # number of games per match
 generations = 5000
 ## Shape:
 # Input layer - memory size
