@@ -2,10 +2,11 @@
 # @Author: UnsignedByte
 # @Date:	 22:05:55, 02-Dec-2020
 # @Last Modified by:   UnsignedByte
-# @Last Modified time: 23:33:41, 03-Dec-2020
+# @Last Modified time: 15:40:23, 04-Dec-2020
 
 import numpy as np
 import utils
+from utils import bcolors
 
 # chance to become a random agent
 random_chance = 0.01
@@ -21,6 +22,11 @@ def mutateNode(n):
 	if np.random.sample() < big_mutate_chance:
 		n=np.random.randn();
 	return n;
+
+def testCase(n, memory):
+	c = n.calculate(memory);
+	print(f"Net would run {bcolors.WARNING}{bcolors.BOLD}{np.argmax(c[-1])+1}{bcolors.ENDC} given {bcolors.WARNING}{memory}{bcolors.ENDC}; probabilities {bcolors.WARNING}{list(c[-1])}{bcolors.ENDC}")
+	print(f"{bcolors.GREY}{c}{bcolors.ENDC}")
 
 # Fake brain that outputs random output.
 class Bot:

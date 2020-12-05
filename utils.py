@@ -2,7 +2,7 @@
 # @Author: UnsignedByte
 # @Date:   21:41:38, 02-Dec-2020
 # @Last Modified by:   UnsignedByte
-# @Last Modified time: 10:44:50, 04-Dec-2020
+# @Last Modified time: 14:08:44, 04-Dec-2020
 
 import numpy as np
 
@@ -37,6 +37,7 @@ class bcolors:
   HEADER = '\033[95m'
   OKBLUE = '\033[94m'
   OKGREEN = '\033[92m'
+  GREY = '\033[37m'
   WARNING = '\033[93m'
   FAIL = '\033[91m'
   ENDC = '\033[0m'
