@@ -2,7 +2,7 @@
 # @Author: UnsignedByte
 # @Date:	 22:05:55, 02-Dec-2020
 # @Last Modified by:   UnsignedByte
-# @Last Modified time: 19:33:08, 05-Dec-2020
+# @Last Modified time: 19:33:49, 05-Dec-2020
 
 import numpy as np
 import utils
@@ -129,6 +129,7 @@ class Brain:
 			layers.append((a @ layers[-1])+b) # calculate next layer {sigmoid(weights * layer + biases)}
 		# print(layers)
 		layers.append(utils.sigmoid(layers[-1]));
+		print(layers[-1])
 		layers[-1] = layers[-1]/sum(layers[-1]);
 		return layers
 	def result(self, memory):
