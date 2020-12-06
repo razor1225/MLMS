@@ -2,12 +2,9 @@
 # @Author: UnsignedByte
 # @Date:   21:41:38, 02-Dec-2020
 # @Last Modified by:   UnsignedByte
-# @Last Modified time: 17:30:31, 05-Dec-2020
+# @Last Modified time: 17:36:13, 05-Dec-2020
 
-try:
-	import cupy as np
-except Exception:
-	import numpy as np
+import numpy as np
 
 # https://stackoverflow.com/questions/2267362/how-to-convert-an-integer-to-a-string-in-any-base
 def int2base(x, base):
