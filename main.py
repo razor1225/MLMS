@@ -2,7 +2,7 @@
 # @Author: UnsignedByte
 # @Date:   11:42:41, 01-Dec-2020
 # @Last Modified by:   UnsignedByte
-# @Last Modified time: 17:31:48, 05-Dec-2020
+# @Last Modified time: 17:38:10, 05-Dec-2020
 
 import numpy as np
 import utils
@@ -46,6 +46,7 @@ if __name__ == '__main__':
 	brainShape = [5*P*M, 10, M] # shape of neural net
 	
 	np.save(os.path.join(fpath, f'params.npy'), (netCount, gamesPer, fakeAgents, gameCount, generations, P, M, G, brainShape))
+	multiprocessing.set_start_method('spawn')
 
 # numManager.register('numeri', numeri, exposed = ['getLen', 'appendi', 'svuota', 'stampa'])  
 
