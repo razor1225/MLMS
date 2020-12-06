@@ -2,7 +2,7 @@
 # @Author: UnsignedByte
 # @Date:   09:39:42, 04-Dec-2020
 # @Last Modified by:   UnsignedByte
-# @Last Modified time: 12:45:25, 06-Dec-2020
+# @Last Modified time: 14:42:02, 06-Dec-2020
 
 import numpy as np
 import utils
@@ -46,6 +46,7 @@ for name in names:
 		nets = np.load(os.path.join(fpath, 'raws', f'gen_{grange[i]}.npy'), allow_pickle=True)
 		scorePercentiles[i]=np.percentile([x.score/x.plays for x in nets], percentiles);
 		rcountPercentiles[i]=np.apply_along_axis(lambda x:np.percentile(x, percentiles), 1, np.transpose([(lambda k:[k[0]]+[k[i-1]+k[i]for i in range(1,len(k))])(x.rcount/x.plays)[:-1] for x in nets]))
+		# rcountPercentiles[i]=np.apply_along_axis(lambda x:np.percentile(x, percentiles), 1, np.transpose([x.rcount/x.plays for x in nets]))
 		if i%100==0:
 			print(f'Generation {grange[i]} completed.')
 
@@ -59,6 +60,7 @@ for name in names:
 	scoreAx.set_xlabel('Generation #')
 	scoreAx.set_ylabel('Average score per round')
 	scoreAx.set_title('Average scores for percentiles')
+	scoreAx.set_xlim(0, generations)
 
 	rcountAx = fig.add_subplot(*plotgrid, 2, sharex = scoreAx);
 	for i in range(len(percentiles)):
@@ -70,6 +72,7 @@ for name in names:
 	rcountAx.set_title('Average proportions of each move')
 	rcountAx.set_ylabel('Proportion')
 	rcountAx.set_xlabel('Generation #')
+	rcountAx.set_ylim(0, 1)
 
 	plt.savefig(os.path.join(fpath, 'scores.svg'), bbox_inches='tight')
 
