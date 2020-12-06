@@ -2,7 +2,7 @@
 # @Author: UnsignedByte
 # @Date:	 22:05:55, 02-Dec-2020
 # @Last Modified by:   UnsignedByte
-# @Last Modified time: 19:45:31, 05-Dec-2020
+# @Last Modified time: 21:15:03, 05-Dec-2020
 
 import numpy as np
 import utils
@@ -73,9 +73,9 @@ cases = [
 # chance to become a random agent
 random_chance = 0.01
 # chance to completely change a weight
-big_mutate_chance = 0.001;
+big_mutate_chance = 0.0005;
 # chance to mutate a weight by value*small_mutate_prop*randn
-small_mutate_chance = 0.01
+small_mutate_chance = 0.001
 small_mutate_prop = 0.01;
 
 def mutateNode(n):

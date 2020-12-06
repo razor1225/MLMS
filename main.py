@@ -2,7 +2,7 @@
 # @Author: UnsignedByte
 # @Date:   11:42:41, 01-Dec-2020
 # @Last Modified by:   UnsignedByte
-# @Last Modified time: 18:10:33, 05-Dec-2020
+# @Last Modified time: 13:44:43, 06-Dec-2020
 
 import numpy as np
 import utils
@@ -53,12 +53,14 @@ if __name__ == '__main__':
 	nets = np.array([brain.Brain.random(brainShape) for i in range(netCount)])
 	# possibleGames = np.array(list(itertools.combinations(range(netCount+fakeAgents), P)), dtype=np.dtype('int,int')) # All possible arrangements of games (subsets)
 	
-def poolInit(a,c,f):
+def poolInit(a,c,d,f):
 	global P
 	global G
+	global M
 	global allnets
 	P=a
 	G=c
+	M=d
 	allnets=f
 
 def runGame(g, nets):
@@ -66,7 +68,7 @@ def runGame(g, nets):
 	for x in nets[greal]:x.reset()
 	scores = np.zeros((len(nets),2))
 	memories = np.zeros((len(allnets),int(nets[0].shape[0]/nets[0].shape[-1])))
-	rcounts = np.zeros((len(nets),2))
+	rcounts = np.zeros((len(nets),M))
 	for j in range(gameCount):
 		results = tuple(allnets[x].result(memories[x]) for x in g)
 		for k in range(len(g)): # Loop through all players to calculate results
@@ -89,7 +91,7 @@ if __name__ == '__main__':
 
 		# NOTE: number of games per generation will be netCount choose P (can easily become huge if P>2)
 		# Loop through players and choose 2 opponents for each (Note: players can play the same brains twice, including self)
-		pool = multiprocessing.Pool(None, poolInit, (P,G,allnets));
+		pool = multiprocessing.Pool(None, poolInit, (P,G,M,allnets));
 		res = pool.starmap(runGame, [(np.append([i], np.random.choice(range(len(allnets)), P-1)), nets) for ii in range(gamesPer) for i in range(netCount)])
 		pool.close();
 		for i in res:
