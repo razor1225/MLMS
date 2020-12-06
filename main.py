@@ -2,7 +2,7 @@
 # @Author: UnsignedByte
 # @Date:   11:42:41, 01-Dec-2020
 # @Last Modified by:   UnsignedByte
-# @Last Modified time: 23:36:57, 04-Dec-2020
+# @Last Modified time: 16:39:33, 05-Dec-2020
 
 import numpy as np
 import utils
@@ -15,9 +15,9 @@ import os
 import shutil
 
 netCount = 100 # number of neural nets
-gamesPer = 70; # number of oppontents each player plays each generation
-fakeAgents = 50 # fake agent count
-gameCount = 30 # number of games per match
+gamesPer = 50; # number of oppontents each player plays each generation
+fakeAgents = 30 # fake agent count
+gameCount = 50 # number of games per match
 generations = 5000
 ## Shape:
 # Input layer - memory size
@@ -37,13 +37,13 @@ if __name__ == '__main__':
 		tokens = list(map(int, f.read().split()));
 		P = tokens.pop(0); # number of concurrent players
 		M = tokens.pop(0); # number of moves per player
-		G = np.zeros((P,)*M) # game payout matrix
-		for i in range(P**M):
-			n = utils.int2base(i, P)
-			n = n+[0]*(M-len(n))
+		G = np.zeros((M,)*P) # game payout matrix
+		for i in range(M**P):
+			n = utils.int2base(i, M)
+			n = n+[0]*(P-len(n))
 			G[tuple(n)] = tokens.pop(0)
 
-	brainShape = [5*P*M, 5, M] # shape of neural net
+	brainShape = [5*P*M, 10, M] # shape of neural net
 	
 	np.save(os.path.join(fpath, f'params.npy'), (netCount, gamesPer, fakeAgents, gameCount, generations, P, M, G, brainShape))
 
