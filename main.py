@@ -2,7 +2,7 @@
 # @Author: UnsignedByte
 # @Date:   11:42:41, 01-Dec-2020
 # @Last Modified by:   UnsignedByte
-# @Last Modified time: 18:00:49, 05-Dec-2020
+# @Last Modified time: 18:10:33, 05-Dec-2020
 
 import numpy as np
 import utils
@@ -69,7 +69,6 @@ def runGame(g, nets):
 	rcounts = np.zeros((len(nets),2))
 	for j in range(gameCount):
 		results = tuple(allnets[x].result(memories[x]) for x in g)
-		print(results)
 		for k in range(len(g)): # Loop through all players to calculate results
 			if g[k] in greal:
 				rcounts[g[k],results[k]]+=1
