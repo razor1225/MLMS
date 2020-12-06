@@ -2,12 +2,9 @@
 # @Author: UnsignedByte
 # @Date:	 22:05:55, 02-Dec-2020
 # @Last Modified by:   UnsignedByte
-# @Last Modified time: 18:09:15, 05-Dec-2020
+# @Last Modified time: 18:12:53, 05-Dec-2020
 
-try:
-	import cupy as np
-except Exception:
-	import numpy as np
+import numpy as np
 import utils
 from utils import bcolors
 
