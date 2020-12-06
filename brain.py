@@ -2,7 +2,7 @@
 # @Author: UnsignedByte
 # @Date:	 22:05:55, 02-Dec-2020
 # @Last Modified by:   UnsignedByte
-# @Last Modified time: 18:01:06, 05-Dec-2020
+# @Last Modified time: 18:09:15, 05-Dec-2020
 
 try:
 	import cupy as np
@@ -99,7 +99,7 @@ class Bot:
 		self.count = count;
 		self.distr = np.random.dirichlet(np.ones(count)/(10*np.random.sample()**4));
 	def result(self, *args):
-		return np.random.choice(range(self.count), size=1, p=self.distr)[0];
+		return int(np.random.choice(range(self.count), size=1, p=self.distr));
 
 class Brain:
 	def __init__(self, shape, biases, weights):
@@ -135,8 +135,7 @@ class Brain:
 		layers[-1] = layers[-1]/sum(layers[-1]);
 		return layers
 	def result(self, memory):
-		l = np.random.choice(range(self.shape[-1]), size=1, p=self.calculate(memory)[-1])[0];
-		# print(l)
+		l = int(np.random.choice(range(self.shape[-1]), size=1, p=self.calculate(memory)[-1]));
 		return l; # return chosen choice
 	def reproduce(self):
 		self.age+=1;
