@@ -2,7 +2,7 @@
 # @Author: UnsignedByte
 # @Date:	 22:05:55, 02-Dec-2020
 # @Last Modified by:   UnsignedByte
-# @Last Modified time: 17:40:12, 05-Dec-2020
+# @Last Modified time: 17:46:17, 05-Dec-2020
 
 try:
 	import cupy as np
@@ -135,7 +135,8 @@ class Brain:
 		layers[-1] = layers[-1]/sum(layers[-1]);
 		return layers
 	def result(self, memory):
-		l = np.random.choice(range(self.shape[-1]), p=self.calculate(memory)[-1]);
+		l = np.random.choice(range(self.shape[-1]), size=1, p=self.calculate(memory)[-1])[0];
+		# print(l)
 		return l; # return chosen choice
 	def reproduce(self):
 		self.age+=1;
