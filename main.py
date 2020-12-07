@@ -2,7 +2,7 @@
 # @Author: UnsignedByte
 # @Date:   11:42:41, 01-Dec-2020
 # @Last Modified by:   UnsignedByte
-# @Last Modified time: 11:58:59, 07-Dec-2020
+# @Last Modified time: 12:06:06, 07-Dec-2020
 
 import numpy as np
 import utils
@@ -15,10 +15,10 @@ import os
 import shutil
 import re
 
-netCount = 10 # number of neural nets
-gamesPer = 1; # number of oppontents each player plays each generation
-fakeAgents = 0 # fake agent count
-gameCount = 1 # number of games per match
+netCount = 100 # number of neural nets
+gamesPer = 60; # number of oppontents each player plays each generation
+fakeAgents = 30 # fake agent count
+gameCount = 40 # number of games per match
 generations = 5000
 ## Shape:
 # Input layer - memory size
@@ -57,6 +57,7 @@ if __name__ == '__main__':
 		fpath = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'results', millis)
 		rawpath = os.path.join(fpath, 'raws');
 		netCount, gamesPer, fakeAgents, gameCount, generations, P, M, G, brainShape = np.load(os.path.join(fpath, 'params.npy'), allow_pickle=True)
+		print(f'Continuing with {netCount, gamesPer, fakeAgents, gameCount} to generation {generations}')
 		genCont=max([0]+[int(re.match(r'^gen_([0-9]+)\.npy$', x).group(1)) for x in os.listdir(rawpath)]);
 		nets = np.load(os.path.join(rawpath, f'gen_{genCont}.npy'), allow_pickle=True)
 	multiprocessing.set_start_method('spawn')
