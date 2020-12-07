@@ -2,7 +2,7 @@
 # @Author: UnsignedByte
 # @Date:   09:39:42, 04-Dec-2020
 # @Last Modified by:   UnsignedByte
-# @Last Modified time: 14:42:02, 06-Dec-2020
+# @Last Modified time: 11:39:28, 07-Dec-2020
 
 import numpy as np
 import utils
@@ -30,6 +30,7 @@ for name in names:
 	# gens = [x for x in os.listdir(os.path.join(fpath, 'raws')) if re.match(r'gen_[0-9]+\.npy', x)];
 
 	netCount, gamesPer, fakeAgents, gameCount, generations, P, M, G, brainShape = np.load(os.path.join(fpath, 'params.npy'), allow_pickle=True)
+	print(f'Brain shape was {brainShape}, Memory length {int(brainShape[0]/M/P)}')
 
 	percentiles = [0, 10, 25, 50, 75, 90, 100]
 	percstyles = ['-', '--', ':', '-', ':', '--', '-']
@@ -43,10 +44,11 @@ for name in names:
 	grange = range(0, generations, int(generations/substitutions));
 
 	for i in range(substitutions):
-		nets = np.load(os.path.join(fpath, 'raws', f'gen_{grange[i]}.npy'), allow_pickle=True)
+		nets = np.load(os.path.join(fpath, 'raws', f'gen_{grange[i]}.npy'), allow_pickle=True).sort(key=lambda x:x.score/x.plays)
 		scorePercentiles[i]=np.percentile([x.score/x.plays for x in nets], percentiles);
 		rcountPercentiles[i]=np.apply_along_axis(lambda x:np.percentile(x, percentiles), 1, np.transpose([(lambda k:[k[0]]+[k[i-1]+k[i]for i in range(1,len(k))])(x.rcount/x.plays)[:-1] for x in nets]))
 		# rcountPercentiles[i]=np.apply_along_axis(lambda x:np.percentile(x, percentiles), 1, np.transpose([x.rcount/x.plays for x in nets]))
+		
 		if i%100==0:
 			print(f'Generation {grange[i]} completed.')
 
@@ -61,13 +63,15 @@ for name in names:
 	scoreAx.set_ylabel('Average score per round')
 	scoreAx.set_title('Average scores for percentiles')
 	scoreAx.set_xlim(0, generations)
+	scoreAx.set_ylim(0, G.max())
 
 	rcountAx = fig.add_subplot(*plotgrid, 2, sharex = scoreAx);
 	for i in range(len(percentiles)):
 		for j in range(M-1):
 			rcountAx.plot(grange, rcountPercentiles[:,j,i], label=f'{percentiles[i]}%', linestyle=percstyles[i], linewidth=percwidth[i], color=cmap(j))
+	scoreAx.get_legend_handles_labels()
 	l1 = rcountAx.legend(*scoreAx.get_legend_handles_labels(), bbox_to_anchor=(1.05, 0, 0.25, 1), loc='upper left', borderaxespad=0.)
-	rcountAx.legend(handles=[matplotlib.patches.Patch(color=cmap(i), label=f'Move {i}') for i in range(M-1)], bbox_to_anchor=(1.05, 0, 0.25, 1), loc='lower left', borderaxespad=0.)
+	rcountAx.legend(handles=[matplotlib.patches.Patch(color=cmap(i), label=f'Move {i+1}') for i in range(M-1)], bbox_to_anchor=(1.05, 0, 0.25, 1), loc='lower left', borderaxespad=0.)
 	rcountAx.add_artist(l1)
 	rcountAx.set_title('Average proportions of each move')
 	rcountAx.set_ylabel('Proportion')

@@ -2,7 +2,7 @@
 # @Author: UnsignedByte
 # @Date:	 22:05:55, 02-Dec-2020
 # @Last Modified by:   UnsignedByte
-# @Last Modified time: 14:05:31, 06-Dec-2020
+# @Last Modified time: 11:50:29, 07-Dec-2020
 
 import numpy as np
 import utils
@@ -92,9 +92,12 @@ def testCase(n, memory):
 
 # Fake brain that outputs random output.
 class Bot:
-	def __init__(self, count):
+	def __init__(self, count, distr):
 		self.count = count;
-		self.distr = np.random.dirichlet(np.ones(count)/(10*np.random.sample()**4));
+		self.distr = distr;
+	@classmethod
+	def random(brain, count):
+		return brain(count, np.random.dirichlet(np.ones(count)/(10*np.random.sample()**4)));
 	def result(self, *args):
 		return int(np.random.choice(range(self.count), size=1, p=self.distr));
 
@@ -129,7 +132,7 @@ class Brain:
 			layers.append((a @ layers[-1])+b) # calculate next layer {sigmoid(weights * layer + biases)}
 		# print(layers)
 		layers.append(utils.sigmoid(layers[-1]));
-		if sum(layers[-1])==0: layers[-1] = np.ones(2)/2; # if due to precision both are 0
+		if sum(layers[-1])==0: layers[-1] = np.ones(self.shape[-1]); # if due to precision both are 0
 		layers[-1] = layers[-1]/sum(layers[-1]);
 		return layers
 	def result(self, memory):
