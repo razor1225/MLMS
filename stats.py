@@ -2,7 +2,7 @@
 # @Author: UnsignedByte
 # @Date:   09:39:42, 04-Dec-2020
 # @Last Modified by:   UnsignedByte
-# @Last Modified time: 11:39:28, 07-Dec-2020
+# @Last Modified time: 14:01:44, 07-Dec-2020
 
 import numpy as np
 import utils
@@ -44,11 +44,16 @@ for name in names:
 	grange = range(0, generations, int(generations/substitutions));
 
 	for i in range(substitutions):
-		nets = np.load(os.path.join(fpath, 'raws', f'gen_{grange[i]}.npy'), allow_pickle=True).sort(key=lambda x:x.score/x.plays)
+		nets = sorted(np.load(os.path.join(fpath, 'raws', f'gen_{grange[i]}.npy'), allow_pickle=True), key=lambda x:x.score/x.plays)
 		scorePercentiles[i]=np.percentile([x.score/x.plays for x in nets], percentiles);
 		rcountPercentiles[i]=np.apply_along_axis(lambda x:np.percentile(x, percentiles), 1, np.transpose([(lambda k:[k[0]]+[k[i-1]+k[i]for i in range(1,len(k))])(x.rcount/x.plays)[:-1] for x in nets]))
 		# rcountPercentiles[i]=np.apply_along_axis(lambda x:np.percentile(x, percentiles), 1, np.transpose([x.rcount/x.plays for x in nets]))
-		
+
+		if i==substitutions-1:
+			res = brain.runGame([nets[-1]]*P, 100, M, G);
+			print(res[3])
+
+
 		if i%100==0:
 			print(f'Generation {grange[i]} completed.')
 

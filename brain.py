@@ -2,7 +2,7 @@
 # @Author: UnsignedByte
 # @Date:	 22:05:55, 02-Dec-2020
 # @Last Modified by:   UnsignedByte
-# @Last Modified time: 11:50:29, 07-Dec-2020
+# @Last Modified time: 14:01:05, 07-Dec-2020
 
 import numpy as np
 import utils
@@ -84,6 +84,24 @@ def mutateNode(n):
 	if np.random.sample() < big_mutate_chance:
 		n=np.random.randn();
 	return n;
+
+def runGame(nets, count, M, G):
+	for x in nets:x.reset()
+	scores = np.zeros((len(nets),2))
+	memories = np.zeros((len(nets),int(nets[0].shape[0]/M)))
+	rcounts = np.zeros((len(nets),M))
+	moves = np.zeros((count,len(nets)), dtype=int)
+	allscores = np.zeros((count, len(nets)))
+	for j in range(count):
+		moves[j] = [nets[x].result(memories[x]) for x in range(len(nets))]
+		for k in range(len(nets)): # Loop through all players to calculate moves
+			rcounts[k,moves[j,k]]+=1
+			shifted = tuple(moves[j,k:])+tuple(moves[j,:k]);
+			scores[k,1]+=1 # add total plays so average score can be calculated
+			allscores[j,k] = G[shifted]
+			scores[k,0]+=allscores[j,k] # add score based on game gridx
+			memories[k] = np.append(memories[k,len(nets):], np.array([shifted])+1)
+	return (scores, rcounts, moves, allscores)
 
 def testCase(n, memory):
 	c = n.calculate(memory);
