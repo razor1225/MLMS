@@ -2,7 +2,7 @@
 # @Author: UnsignedByte
 # @Date:   09:39:42, 04-Dec-2020
 # @Last Modified by:   UnsignedByte
-# @Last Modified time: 14:01:44, 07-Dec-2020
+# @Last Modified time: 10:45:26, 08-Dec-2020
 
 import numpy as np
 import utils
@@ -19,7 +19,7 @@ names = input("Dataset name:")
 root = os.path.join(os.path.dirname(__file__), 'results')
 
 if not names:
-	names = [x for x in os.listdir(root) if re.match(r'^[0-9]+-completed$', x)]
+	names = [x for x in os.listdir(root) if re.match(r'^\d+-completed$', x)]
 else:
 	names = [names]
 
@@ -33,10 +33,10 @@ for name in names:
 	print(f'Brain shape was {brainShape}, Memory length {int(brainShape[0]/M/P)}')
 
 	percentiles = [0, 10, 25, 50, 75, 90, 100]
-	percstyles = ['-', '--', ':', '-', ':', '--', '-']
-	percwidth = [0.5, 0.5, 0.5, 1, 0.5, 0.5, 0.5]
+	percstyles = ['-','--', ':', '-', ':', '--', '-']
+	percwidth = [0.5,0.5, 0.5, 1, 0.5, 0.5, 0.5]
 
-	substitutions = 100; # number of generations to read out of total
+	substitutions = 200; # number of generations to read out of total
 
 	scorePercentiles = np.zeros((substitutions,len(percentiles)));
 	rcountPercentiles = np.zeros((substitutions,M-1,len(percentiles)))
@@ -51,7 +51,7 @@ for name in names:
 
 		if i==substitutions-1:
 			res = brain.runGame([nets[-1]]*P, 100, M, G);
-			print(res[3])
+			# print(res[3])
 
 
 		if i%100==0:
