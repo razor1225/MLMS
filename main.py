@@ -2,7 +2,7 @@
 # @Author: UnsignedByte
 # @Date:   11:42:41, 01-Dec-2020
 # @Last Modified by:   UnsignedByte
-# @Last Modified time: 12:06:06, 07-Dec-2020
+# @Last Modified time: 08:54:10, 08-Dec-2020
 
 import numpy as np
 import utils
@@ -58,7 +58,7 @@ if __name__ == '__main__':
 		rawpath = os.path.join(fpath, 'raws');
 		netCount, gamesPer, fakeAgents, gameCount, generations, P, M, G, brainShape = np.load(os.path.join(fpath, 'params.npy'), allow_pickle=True)
 		print(f'Continuing with {netCount, gamesPer, fakeAgents, gameCount} to generation {generations}')
-		genCont=max([0]+[int(re.match(r'^gen_([0-9]+)\.npy$', x).group(1)) for x in os.listdir(rawpath)]);
+		genCont=max([0]+[int(re.match(r'^gen_(\d+)\.npy$', x).group(1)) for x in os.listdir(rawpath)]);
 		nets = np.load(os.path.join(rawpath, f'gen_{genCont}.npy'), allow_pickle=True)
 	multiprocessing.set_start_method('spawn')
 
